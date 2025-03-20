@@ -1,8 +1,7 @@
 # Import python packages
 import streamlit as st
-from snowflake.snowpark.functions import col
-import requests
-import pandas as pd
+from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark.functions import col, when_matched
 
 
 
@@ -14,8 +13,7 @@ st.write("""Orders that needs to be filled""")
 name_on_order = st.text_input('Name on Smoothie:')
 st.write('The name on your smoothie will be:', name_on_order)
 
-cnx = st.connection("snowflake")
-session = cnx.session()
+session = get_active_session()
 my_dataframe = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()
 
 if my_dataframe:
@@ -36,3 +34,5 @@ if my_dataframe:
             st.write('Something went wrong.')
 else:
     st.success("There are no pending orders right now.", icon = '👍')
+
+
